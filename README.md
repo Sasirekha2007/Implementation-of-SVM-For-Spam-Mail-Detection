@@ -23,42 +23,52 @@ RegisterNumber: 212225040388
 
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-data = pd.read_csv("spam.csv", encoding="latin-1")
-data = data[['v1', 'v2']]
-data.columns = ['label', 'message']
-data['label'] = data['label'].map({'ham': 0, 'spam': 1})
-
-X = data['message']
-y = data['label']
-
-vectorizer = TfidfVectorizer(stop_words='english')
-X = vectorizer.fit_transform(X)
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+# Load only required columns
+data = pd.read_csv(
+    "spam.csv",
+    encoding='Windows-1252',
+    usecols=['v1','v2']
 )
 
-model = SVC(kernel='linear')
-model.fit(X_train, y_train)
+print("data")
+print(data)
 
-y_pred = model.predict(X_test)
+x = data['v2']
+y = data['v1']
 
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\nClassification Report:\n")
-print(classification_report(y_test, y_pred))
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(
+    x,y,test_size=0.2,random_state=0
+)
 
-cm = confusion_matrix(y_test, y_pred)
-print("\nConfusion Matrix:\n")
-print(cm)
+from sklearn.feature_extraction.text import CountVectorizer
+cv = CountVectorizer()
+
+x_train = cv.fit_transform(x_train)
+x_test = cv.transform(x_test)
+
+from sklearn.svm import SVC
+model = SVC()
+
+model.fit(x_train,y_train)
+
+y_pred = model.predict(x_test)
+
+from sklearn.metrics import accuracy_score,confusion_matrix,classification_report
+
+print("\nconfusion matrix")
+print(confusion_matrix(y_test,y_pred))
+
+print("\naccuracy")
+print(accuracy_score(y_test,y_pred))
+
+print("\nclassification report")
+print(classification_report(y_test,y_pred))
 ```
 
 ## Output:
-<img width="587" height="393" alt="image" src="https://github.com/user-attachments/assets/a2eede5b-783e-4a93-8a3d-9925e193702e" />
+<img width="756" height="692" alt="image" src="https://github.com/user-attachments/assets/541d151e-711b-49f7-9ba2-9cf48ca657f0" />
 
 ## Result:
 Thus the program to implement the SVM For Spam Mail Detection is written and verified using python programming.
